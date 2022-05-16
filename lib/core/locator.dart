@@ -14,7 +14,7 @@ Future<void> setupLocator() async {
 
   // String deviceId = await DeviceId.getID;
   // PackageInfo packageInfo = await PackageInfo.fromPlatform();
-  // locator.registerLazySingleton(() => sharedPreferences);
+  locator.registerLazySingleton(() => sharedPreferences);
   // locator.registerLazySingleton<DeviceInfoService>(() => deviceInfoInstance);
 
   locator.registerLazySingleton<NavigationService>(() => NavigationService());
