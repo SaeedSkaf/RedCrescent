@@ -1,130 +1,171 @@
-import 'package:cache_manager/core/read_cache_service.dart';
 import 'package:flutter/material.dart';
 import 'package:sarc/core/locator.dart';
+import 'package:sarc/core/shared_prefrence_repository.dart';
+import 'package:sarc/data/services.dart';
 import 'package:stacked_services/stacked_services.dart';
 import '../../core/router.router.dart';
 
 class MyDrawer extends StatefulWidget {
-  const MyDrawer({Key? key}) : super(key: key);
+  MyDrawer({Key? key}) : super(key: key);
 
   @override
   State<MyDrawer> createState() => _MyDrawerState();
 }
 
 class _MyDrawerState extends State<MyDrawer> {
-  String username = "username";
-  String password = "password";
-
-  void getDrawer() async {
-    username = await ReadCache.getString(key: 'username');
-    password = await ReadCache.getString(key: 'password');
-  }
-
+  final sharedPreferencesRepository = locator<SharedPreferencesRepository>();
+  final navigation = locator<NavigationService>();
+  final services = locator<Services>();
+  String fullName = "";
+  String phone = "";
   @override
   void initState() {
-    getDrawer();
+    fullName = sharedPreferencesRepository.getUserInfo().fullName!;
+    phone = sharedPreferencesRepository.getUserInfo().phone!;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-        child: ListView(
-      children: <Widget>[
-        UserAccountsDrawerHeader(
-          accountName: Text(username),
-          accountEmail: Text(password),
-          currentAccountPicture: const CircleAvatar(
-            child: Icon(Icons.person),
-          ),
-          decoration: const BoxDecoration(
-            color: Colors.red,
-            image: DecorationImage(
-                image: AssetImage("assets/images/2.jpg"), fit: BoxFit.cover),
-          ),
-        ),
-        ListTile(
-            title: const Text(
-              "الصفحة الرئيسية ",
-              style: TextStyle(color: Colors.black, fontSize: 14),
-            ),
-            leading: const Icon(
-              Icons.home,
-              color: Colors.red,
-            ),
-            onTap: () {
-              locator<NavigationService>().clearStackAndShow(Routes.homeView);
-            }),
-        ListTile(
-          title: const Text(
-            "تسجيل والغاء المناوبات",
-            style: TextStyle(color: Colors.black, fontSize: 14),
-          ),
-          leading: const Icon(
-            Icons.call,
-            color: Colors.red,
-          ),
-          onTap: () {
-            locator<NavigationService>()
-                .navigateTo(Routes.shiftRegistrationView);
-          },
-        ),
-        ListTile(
-            title: const Text(
-              " عرض المناوبات",
-              style: TextStyle(color: Colors.black, fontSize: 14),
-            ),
-            leading: const Icon(
-              Icons.vpn_key_outlined,
-              color: Colors.red,
-            ),
-            onTap: () {
-              locator<NavigationService>().navigateTo(Routes.showShiftsView);
-            }),
-        const Divider(
-          color: Colors.redAccent,
-          thickness: 1.5,
-        ),
-        ListTile(
-            title: const Text(
-              " حول التطبيق ",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 14,
+    return SizedBox(
+        width: MediaQuery.of(context).size.width * 0.58,
+        child: Drawer(
+            child: ListView(
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              decoration:
+                  const BoxDecoration(color: Color.fromARGB(180, 244, 67, 54)),
+              accountName: Text(
+                fullName,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              accountEmail: Text(
+                phone,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              currentAccountPicture: Image.asset(
+                "assets/images/staff.png",
               ),
             ),
-            leading: const Icon(
-              Icons.warning_amber_sharp,
-              color: Colors.red,
-            ),
-            onTap: () {}),
-        ListTile(
-            title: const Text(
-              " الاعدادات ",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 14,
+            ListTile(
+                title: const Text(
+                  "الصفحة الرئيسية ",
+                  style: TextStyle(color: Colors.black, fontSize: 16),
+                ),
+                leading: const Icon(
+                  Icons.home,
+                  color: Colors.red,
+                ),
+                onTap: () {
+                  locator<NavigationService>()
+                      .clearStackAndShow(Routes.homeView);
+                }),
+            ListTile(
+              title: const Text(
+                "تسجيل  المناوبات",
+                style: TextStyle(color: Colors.black, fontSize: 16),
               ),
-            ),
-            leading: const Icon(
-              Icons.settings_rounded,
-              color: Colors.red,
-            ),
-            onTap: () {}),
-        ListTile(
-            title: const Text(
-              " تسجيل الخروج ",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 14,
+              leading: const Icon(
+                Icons.call,
+                color: Colors.red,
               ),
+              onTap: () {
+                locator<NavigationService>()
+                    .navigateTo(Routes.shiftRegistrationView);
+              },
             ),
-            leading: const Icon(
-              Icons.logout,
-              color: Colors.red,
+            ListTile(
+              title: const Text(
+                "الغاء المناوبات",
+                style: TextStyle(color: Colors.black, fontSize: 16),
+              ),
+              leading: const Icon(
+                Icons.cancel_rounded,
+                color: Colors.red,
+              ),
+              onTap: () {
+                locator<NavigationService>().navigateTo(Routes.shiftCancelView);
+              },
             ),
-            onTap: () {}),
-      ],
-    ));
+            // ListTile(
+            //   title: const Text(
+            //     "طلبات الإلغاء",
+            //     style: TextStyle(color: Colors.black, fontSize: 16),
+            //   ),
+            //   leading: const Icon(
+            //     Icons.email,
+            //     color: Colors.red,
+            //   ),
+            //   onTap: () {
+            //     locator<NavigationService>().navigateTo(Routes.shiftStatusView);
+            //   },
+            // ),
+            // ListTile(
+            //     title: const Text(
+            //       " عرض المناوبات",
+            //       style: TextStyle(color: Colors.black, fontSize: 16),
+            //     ),
+            //     leading: const Icon(
+            //       Icons.vpn_key_outlined,
+            //       color: Colors.red,
+            //     ),
+            //     onTap: () {
+            //       locator<NavigationService>().navigateTo(Routes.showShiftsView);
+            //     }),
+            const Divider(
+              color: Colors.redAccent,
+              thickness: 2,
+            ),
+            ListTile(
+                title: const Text(
+                  " حول التطبيق ",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                  ),
+                ),
+                leading: const Icon(
+                  Icons.warning_amber_sharp,
+                  color: Colors.red,
+                ),
+                onTap: () {
+                  locator<NavigationService>().navigateTo(Routes.appInfo);
+                }),
+            // ListTile(
+            //     title: const Text(
+            //       " الاعدادات ",
+            //       style: TextStyle(
+            //         color: Colors.black,
+            //         fontSize: 15,
+            //       ),
+            //     ),
+            //     leading: const Icon(
+            //       Icons.settings_rounded,
+            //       color: Colors.red,
+            //     ),
+            //     onTap: () {}),
+            ListTile(
+                title: const Text(
+                  " تسجيل الخروج ",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 15,
+                  ),
+                ),
+                leading: const Icon(
+                  Icons.logout,
+                  color: Colors.red,
+                ),
+                onTap: () {
+                  sharedPreferencesRepository.logout();
+                  locator<NavigationService>()
+                      .clearStackAndShow(Routes.loginView);
+                }),
+          ],
+        )));
   }
 }

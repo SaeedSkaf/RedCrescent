@@ -10,7 +10,6 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  bool begin = true;
   String message = " ";
   @override
   Widget build(BuildContext context) {
@@ -28,84 +27,94 @@ class _LoginViewState extends State<LoginView> {
               // buildPositionedBottom(mdw),
               SizedBox(
                 height: 500,
-                child: Column(
-                  children: [
+                child: Column(children: [
+                  Container(
+                    alignment: Alignment.topCenter,
+                    margin: const EdgeInsets.only(top: 60),
+                    child: const Text(
+                      "تسجيل الدخول",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 12),
+                  ),
+                  if (!isKeyboard)
                     Container(
-                      alignment: Alignment.topCenter,
-                      margin: const EdgeInsets.only(top: 60),
-                      child: const Text(
-                        "تسجيل الدخول",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 26,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(top: 12),
-                    ),
-                    if (!isKeyboard)
-                      Container(
-                          height: 120,
-                          width: 120,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                            boxShadow: const [
-                              BoxShadow(
-                                  color: Colors.white,
-                                  blurRadius: 5,
-                                  spreadRadius: 2)
-                            ],
-                            image: const DecorationImage(
-                              image: AssetImage('assets/images/3.png'),
-                              fit: BoxFit.fill,
-                            ),
-                          ))
-                  ],
-                ),
+                        height: 120,
+                        width: 120,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          boxShadow: const [
+                            BoxShadow(
+                                color: Colors.white,
+                                blurRadius: 5,
+                                spreadRadius: 2)
+                          ],
+                          image: const DecorationImage(
+                            image: AssetImage('assets/images/3.png'),
+                            fit: BoxFit.fill,
+                          ),
+                        ))
+                ]),
               ),
               const SizedBox(
                 height: 300,
               ),
               Center(
                 child: Container(
-                  padding: const EdgeInsets.only(top: 120),
-                  height: mdh * 0.5,
+                  padding: const EdgeInsets.only(top: 190),
+                  height: mdh * 0.7,
                   width: mdw * 0.75,
                   child: SingleChildScrollView(
                     child: Column(
                       children: <Widget>[
-                        TextFormField(
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.grey.shade300,
-                            prefixIcon: const Icon(Icons.person,
-                                color: Color.fromARGB(160, 255, 0, 0)),
-                            labelText: 'اسم المستخدم',
-                            labelStyle: const TextStyle(color: Colors.black),
-                            floatingLabelBehavior: FloatingLabelBehavior.auto,
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: const BorderSide(
-                                color: Colors.white,
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: TextFormField(
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.grey.shade300,
+                              prefixIcon: const Icon(Icons.person,
+                                  color: Color.fromARGB(160, 255, 0, 0)),
+                              labelText: 'اسم المستخدم',
+                              labelStyle: const TextStyle(color: Colors.black),
+                              floatingLabelBehavior: FloatingLabelBehavior.auto,
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: const BorderSide(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: const BorderSide(
+                                  color: Color.fromARGB(75, 0, 0, 0),
+                                  width: 2.0,
+                                ),
                               ),
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: const BorderSide(
-                                color: Color.fromARGB(75, 0, 0, 0),
-                                width: 2.0,
-                              ),
-                            ),
+                            controller: model.username,
                           ),
-                          controller: model.username,
                         ),
                         const SizedBox(
                           height: 15,
                         ),
                         TextFormField(
-                          obscureText: true,
+                          obscureText: model.isObscure,
                           decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                                icon: Icon(model.isObscure
+                                    ? Icons.visibility_off
+                                    : Icons.visibility),
+                                onPressed: () {
+                                  setState(() {
+                                    model.isObscure = !model.isObscure;
+                                  });
+                                }),
                             filled: true,
                             fillColor: Colors.grey.shade300,
                             prefixIcon: const Icon(Icons.lock,
@@ -147,10 +156,6 @@ class _LoginViewState extends State<LoginView> {
                             minWidth: 160.0,
                             height: 50.0,
                             child: RaisedButton(
-                              child: const Text('تأكيـــد',
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold)),
                               textColor: Colors.white,
                               color: Colors.red.shade400,
                               shape: const RoundedRectangleBorder(
@@ -164,21 +169,21 @@ class _LoginViewState extends State<LoginView> {
                                   message = model.errorMessage;
                                 });
                               },
+                              child: const Text('تأكيـــد',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold)),
                             )),
-                        // child: IconButton(
-                        //     icon: const Icon(
-                        //       Icons.track_changes,
-                        //     ),
-                        //     iconSize: 60,
-                        //     color: Colors.red.shade400,
-                        //     splashColor: Colors.grey,
-                        //     onPressed: () async {
-                        //       await model.login(
-                        //           model.username.text, model.password.text);
-                        //       setState(() {
-                        //         message = model.errorMessage;
-                        //       });
-                        //     })
+                        TextButton(
+                            child: const Text("تغيير كلمة المرور",
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.blue,
+                                    decoration: TextDecoration.underline)),
+                            onPressed: () {
+                              model.navToChangePassword();
+                            }),
+                        const SizedBox(height: 15),
                       ],
                     ),
                   ),

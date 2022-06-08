@@ -1,7 +1,8 @@
-import 'package:cache_manager/cache_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sarc/core/locator.dart';
-import 'package:sarc/data/service.dart';
+import 'package:sarc/core/shared_prefrence_repository.dart';
+import 'package:sarc/data/services.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:sarc/models/person_model.dart';
@@ -9,11 +10,14 @@ import '../../core/router.router.dart';
 import '../../data/polls_repository.dart';
 
 class LoginViewModel extends BaseViewModel {
+  //final GlobalKey<FormState> formstate = GlobalKey<FormState>();
+  final sharedPreferencesRepository = locator<SharedPreferencesRepository>();
   final navigation = locator<NavigationService>();
   final pllsRepo = locator<PollsRepository>();
-  final GlobalKey<FormState> formstate = GlobalKey<FormState>();
+  final services = locator<Services>();
   final TextEditingController username = TextEditingController();
   final TextEditingController password = TextEditingController();
+  bool isObscure = true;
   Person? user;
   String errorMessage = " ";
 
@@ -25,18 +29,23 @@ class LoginViewModel extends BaseViewModel {
     } else if (password == "") {
       errorMessage = "الرجاء إدخال كلمة المرور";
     } else {
-      user = await pllsRepo.getUser(username!, password!);
-      if (user!.result != 'invalid') {
-        // service.setPerson(user!);
-        // WriteCache.setString(key: 'username', value: username);
-        // WriteCache.setString(key: 'password', value: password).whenComplete(() {
-        //   navigation.replaceWith(Routes.homeView);
-        // });
-        errorMessage = " ";
-        navigation.replaceWith(Routes.homeView);
-      } else {
-        errorMessage = "اسم المستخدم أو كلمة المرور خاطئة";
+      try {
+        user = await pllsRepo.getUser(username!, password!);
+        if (user!.result != 'invalid') {
+          sharedPreferencesRepository.setLoggedIn(isLoggedIn: true);
+          sharedPreferencesRepository.saveUserInfo(user: user!);
+          errorMessage = " ";
+          navigation.replaceWith(Routes.homeView);
+        } else {
+          errorMessage = "اسم المستخدم أو كلمة المرور خاطئة";
+        }
+      } catch (e) {
+        Fluttertoast.showToast(msg: e.toString(), gravity: ToastGravity.BOTTOM);
       }
     }
+  }
+
+  void navToChangePassword() {
+    navigation.navigateTo(Routes.changePasswordView);
   }
 }

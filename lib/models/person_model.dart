@@ -1,8 +1,7 @@
 class Person {
   int? id;
   String? value;
-  String? fname;
-  String? lname;
+  String? fullName;
   String? phone;
   String? password;
   String? username;
@@ -14,8 +13,7 @@ class Person {
   Person(
       {this.id,
       this.value,
-      this.fname,
-      this.lname,
+      this.fullName,
       this.phone,
       this.password,
       this.username,
@@ -27,8 +25,7 @@ class Person {
   Person.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     value = json['value'];
-    fname = json['fname'];
-    lname = json['lname'];
+    fullName = json['fullName'];
     phone = json['phone'];
     password = json['password'];
     username = json['username'];
@@ -42,8 +39,7 @@ class Person {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['value'] = value;
-    data['fname'] = fname;
-    data['lname'] = lname;
+    data['fullName'] = fullName;
     data['phone'] = phone;
     data['password'] = password;
     data['username'] = username;

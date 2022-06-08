@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'package:sarc/models/person_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'locator.dart';
 
 class SharedPreferencesRepository {
@@ -23,7 +22,11 @@ class SharedPreferencesRepository {
   SharedPreferencesRepository._internal() {
     _preferences = locator<SharedPreferences>();
   }
-  Future<void> logout() async {}
+  void logout() {
+    _setPreference(
+        prefName: loginKey, prefValue: false, prefType: PREF_TYPE_BOOL);
+    _preferences!.remove('"PREF_USER"');
+  }
 
   void setLoggedIn({required bool isLoggedIn}) => _setPreference(
       prefName: loginKey, prefValue: isLoggedIn, prefType: PREF_TYPE_BOOL);
@@ -37,18 +40,17 @@ class SharedPreferencesRepository {
   }
 
   /// Save and Get Logged User Info
-  // void saveUserInfo({required UserProfile user}) {
-  //   String strUser = user.toJson();
-  //   _setPreference(
-  //       prefName: PREF_USER, prefValue: strUser, prefType: PREF_TYPE_STRING);
-  // }
+  void saveUserInfo({required Person user}) {
+    String strUser = jsonEncode(user.toJson());
+    _setPreference(
+        prefName: "PREF_USER", prefValue: strUser, prefType: PREF_TYPE_STRING);
+  }
 
-  // UserProfile getUserInfo() {
-
-  //   UserProfile user =
-  //       UserProfile.fromJson(jsonDecode(_preferences!.getString(PREF_USER)!));
-  //   return user;
-  // }
+  Person getUserInfo() {
+    Person user =
+        Person.fromJson(jsonDecode(_preferences!.getString("PREF_USER")!));
+    return user;
+  }
 
   Future<void> clear() async {
     _preferences!.clear();

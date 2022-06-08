@@ -31,10 +31,6 @@ class _MapViewState extends State<MapView> {
               child: const Text("300"),
             ),
           ],
-          leading: IconButton(
-            icon: const Icon(Icons.call),
-            onPressed: () {},
-          ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
         floatingActionButton: FabMenu(

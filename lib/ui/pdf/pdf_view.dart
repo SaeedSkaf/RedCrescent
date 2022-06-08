@@ -1,23 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
-
-import 'package:sarc/ui/pdf/pdf_view_model.dart';
 import 'package:sarc/ui/shared/my_drawer.dart';
 import 'package:stacked/stacked.dart';
+import '../pdf/pdf_view_model.dart';
+import 'package:flutter_cached_pdfview/flutter_cached_pdfview.dart';
 
-class PdfsView extends StatefulWidget {
-  const PdfsView({Key? key, required this.name, required this.title})
-      : super(key: key);
-  final String name;
-  final String title;
+class PdfView extends StatefulWidget {
+  const PdfView({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return PdfsViewState();
+    return PdfViewState();
   }
 }
 
-class PdfsViewState extends State<PdfsView> {
+class PdfViewState extends State<PdfView> {
   @override
   Widget build(BuildContext context) {
     return ViewModelBuilder<PdfViewModel>.reactive(
@@ -25,14 +21,18 @@ class PdfsViewState extends State<PdfsView> {
           textDirection: TextDirection.rtl,
           child: Scaffold(
             appBar: AppBar(
-                title: Text(
-                  widget.title,
-                  style: const TextStyle(fontSize: 18),
+                title: const Text(
+                  "الدليل المركزي الموحد للإسعاف الأولي",
+                  style: TextStyle(fontSize: 18),
                 ),
                 backgroundColor: Colors.red[600],
                 centerTitle: true,
                 actions: <Widget>[
-                  IconButton(icon: const Icon(Icons.call), onPressed: () {})
+                  IconButton(
+                      icon: const Icon(Icons.arrow_forward),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      })
                 ]),
             drawer: MyDrawer(),
             body: PDF(
@@ -49,7 +49,7 @@ class PdfsViewState extends State<PdfsView> {
               // onPageChanged: (int page, int total) {
               //   print('page change: $page/$total');
               // },
-            ).fromAsset('assets/images/${widget.name}.pdf'),
+            ).fromAsset('assets/images/1.pdf'),
           )),
       viewModelBuilder: () => PdfViewModel(),
       onModelReady: (model) {

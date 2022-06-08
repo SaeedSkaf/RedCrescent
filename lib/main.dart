@@ -1,8 +1,5 @@
-import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:sarc/core/locator.dart';
 import 'package:sarc/core/router.router.dart';
 import 'package:stacked/stacked.dart';
@@ -10,12 +7,22 @@ import 'package:stacked_services/stacked_services.dart';
 import 'package:sizer/sizer.dart';
 
 main() async {
+  HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
   await setupLocator();
   // if ([null].contains(SwitchServerUtil().getEnvironmentType())) {
   //   SwitchServerUtil().saveEnvironmentType(url: EnvironmentType.TEST);
   // }
   runApp(const App());
+}
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
 }
 
 class App extends StatelessWidget {
@@ -28,7 +35,8 @@ class App extends StatelessWidget {
           MaterialApp(
         onGenerateRoute: StackedRouter().onGenerateRoute,
         navigatorKey: StackedService.navigatorKey,
-        title: 'New App',
+        title: 'SARC',
+        theme: ThemeData(primarySwatch: Colors.red),
         navigatorObservers: const [
           // BotToastNavigatorObserver()
         ],

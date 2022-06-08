@@ -1,9 +1,11 @@
-import 'package:cache_manager/cache_manager.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:sarc/core/shared_prefrence_repository.dart';
 import 'package:sarc/data/polls_repository.dart';
-import 'package:sarc/data/service.dart';
+import 'package:sarc/data/services.dart';
 import 'package:sarc/models/person_model.dart';
+import 'package:sarc/models/result_model.dart';
+import 'package:sarc/models/shift.dart';
 import 'package:stacked/stacked.dart';
 import '../../core/locator.dart';
 import 'package:date_utils/date_utils.dart' as imp;
@@ -11,10 +13,41 @@ import '../login/login_view_model.dart';
 import 'package:sarc/ui/login/login_view_model.dart';
 
 class ShiftRegistrationViewModel extends BaseViewModel {
+  List<String> tableShifts = [
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " ",
+    " "
+  ];
+  final sharedPreferencesRepository = locator<SharedPreferencesRepository>();
   final pllsRepo = locator<PollsRepository>();
   final loginViewModel = locator<LoginViewModel>();
-  List<DataRow> dataRows = [];
-  List<String>? tableShifts;
+  final services = locator<Services>();
+  List<Shift> shiftsList = [];
   String? selectedWeek;
   String selectedDay = "اختر التاريخ";
   String? selectedTimeShift;
@@ -22,6 +55,7 @@ class ShiftRegistrationViewModel extends BaseViewModel {
   int currentMonth = DateTime.now().month;
   int? daysInMonth;
   int shiftId = 0;
+  String choice = "";
 
   int getDaysInMonth(int currentYear, int currentMonth) {
     var date = DateTime(currentYear, currentMonth);
@@ -70,6 +104,8 @@ class ShiftRegistrationViewModel extends BaseViewModel {
     Color getColor(String type) {
       if (type == "متاح") {
         return Colors.green;
+      } else if (type == "حجزته مسبقا") {
+        return Colors.blue;
       } else {
         return Colors.red;
       }
@@ -107,30 +143,43 @@ class ShiftRegistrationViewModel extends BaseViewModel {
     ]);
   }
 
-  loadTableShifts() async {
-    // String username = await ReadCache.getString(key: 'username');
-    // String password = await ReadCache.getString(key: 'password');
-    //Person? user = await pllsRepo.getUser(username, password);
-    // print(44444444);
-    // Person? user = service.p;
-    // print(11111111111);
-    // print(user!.fname);
-
+  Future<List<String>?> loadTableShifts(
+      String selectedWeek, String type) async {
     try {
-      // showLoader();
-      List<String>? temp = await pllsRepo.getTableShifts(
-          loginViewModel.user!.id.toString(), selectedWeek!);
-
-      // hideLoader()
-      if (temp!.isNotEmpty) {
-        tableShifts = temp;
-        print(tableShifts);
-      } else {
-        throw Exception("empty list");
-      }
+      Person user = sharedPreferencesRepository.getUserInfo();
+      String id = user.id.toString();
+      List<String>? tempTableShifts =
+          await pllsRepo.getTableShifts(id, selectedWeek, type);
+      return tempTableShifts;
     } catch (e) {
-      print(e);
-      // hideLoader();
+      Fluttertoast.showToast(msg: e.toString(), gravity: ToastGravity.BOTTOM);
     }
+    return null;
+  }
+
+  Future<Result?> sendShifts(List<Shift> shifts, String type) async {
+    try {
+      print(type);
+      Person user = sharedPreferencesRepository.getUserInfo();
+      String id = user.id.toString();
+      List<int> rIdList = [];
+      List<Result> resultList = [];
+
+      for (var x in shifts) {
+        await pllsRepo
+            .getResId(x.date!, x.shiftTime!)
+            .then((value) => rIdList.add(value!));
+      }
+      print(id);
+      print(rIdList);
+
+      await pllsRepo
+          .bookShift(id, rIdList, type)
+          .then((value) => {resultList = value!});
+      return resultList[0];
+    } catch (e) {
+      Fluttertoast.showToast(msg: e.toString(), gravity: ToastGravity.BOTTOM);
+    }
+    return null;
   }
 }
