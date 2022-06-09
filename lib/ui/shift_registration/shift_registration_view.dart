@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:sarc/models/shift.dart';
+import 'package:sarc/models/shift_model.dart';
 import 'package:sarc/ui/shared/my_drawer.dart';
 import 'package:sarc/ui/shift_registration/shift_registration_view_model.dart';
 import 'package:stacked/stacked.dart';
@@ -87,6 +87,10 @@ class ShiftRegistrationViewState extends State<ShiftRegistrationView> {
                                           horizontal: 50),
                                       selected: model.choice == 'اسعاف',
                                       onSelected: (bool selected) async {
+                                        if (model.getLock == 0) {
+                                          model.getId();
+                                          model.getLock++;
+                                        }
                                         setState(() {
                                           model.choice =
                                               (selected ? 'اسعاف' : null)!;
@@ -131,6 +135,10 @@ class ShiftRegistrationViewState extends State<ShiftRegistrationView> {
                                           horizontal: 50),
                                       selected: model.choice == 'عمليات',
                                       onSelected: (bool selected) async {
+                                        if (model.getLock == 0) {
+                                          model.getId();
+                                          model.getLock++;
+                                        }
                                         setState(() {
                                           model.choice =
                                               (selected ? 'عمليات' : null)!;

@@ -205,37 +205,39 @@ class _ShiftCancelView extends State<ShiftCancelView> {
                                 if (model.alternativeName.text.isNotEmpty &&
                                     model.selectedTimeShift != null &&
                                     model.selectedDate != null) {
-                                  await model
+                                  showDialog(
+                                      barrierDismissible: false,
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return const Center(
+                                          child: CircularProgressIndicator(),
+                                        );
+                                      });
+                                  var result = await model
                                       .sendRequest(
                                           model.alternativeName.text,
                                           model.selectedTimeShift!,
                                           model.selectedDate!)
-                                      .then((value) => {
-                                            showDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return AlertDialog(
-                                                    title: const Text("تنبيه",
-                                                        textAlign:
-                                                            TextAlign.center),
-                                                    titleTextStyle:
-                                                        const TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: Colors.black,
-                                                            fontSize: 20),
-                                                    shape: const RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    20))),
-                                                    content: Text(value!,
-                                                        textAlign:
-                                                            TextAlign.center),
-                                                  );
-                                                })
-                                          });
+                                      .whenComplete(
+                                          () => Navigator.pop(context));
+
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text("تنبيه",
+                                              textAlign: TextAlign.center),
+                                          titleTextStyle: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                              fontSize: 20),
+                                          shape: const RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(20))),
+                                          content: Text(result!,
+                                              textAlign: TextAlign.center),
+                                        );
+                                      });
                                 } else {
                                   Fluttertoast.showToast(
                                       msg: "الرجاء إدخال كل البيانات",
@@ -258,32 +260,36 @@ class _ShiftCancelView extends State<ShiftCancelView> {
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(10))),
                               onPressed: () async {
-                                model.orderStatus().then((value) => {
-                                      showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                                title: const Text("تنبيه",
-                                                    textAlign:
-                                                        TextAlign.center),
-                                                titleTextStyle: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
-                                                    fontSize: 20),
-                                                shape:
-                                                    const RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    20))),
-                                                content: Text(
-                                                    "${value![0]}\n${value[1]}",
-                                                    style: const TextStyle(
-                                                      fontSize: 15,
-                                                    ),
-                                                    textAlign:
-                                                        TextAlign.center));
-                                          })
+                                showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    });
+                                var oederResult = await model
+                                    .orderStatus()
+                                    .whenComplete(() => Navigator.pop(context));
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                          title: const Text("تنبيه",
+                                              textAlign: TextAlign.center),
+                                          titleTextStyle: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                              fontSize: 20),
+                                          shape: const RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(20))),
+                                          content: Text(
+                                              "${oederResult![0]}\n${oederResult[1]}",
+                                              style: const TextStyle(
+                                                fontSize: 15,
+                                              ),
+                                              textAlign: TextAlign.center));
                                     });
                               },
                               child: const Text('حالة الطلبات',

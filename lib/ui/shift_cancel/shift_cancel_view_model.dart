@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sarc/core/shared_prefrence_repository.dart';
 import 'package:sarc/data/polls_repository.dart';
+import 'package:sarc/data/services.dart';
 import 'package:sarc/models/person_model.dart';
+import 'package:sarc/models/shift_model.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:sarc/core/locator.dart';
@@ -11,6 +13,7 @@ class ShiftCancleViewModel extends BaseViewModel {
   final sharedPreferencesRepository = locator<SharedPreferencesRepository>();
   final navigation = locator<NavigationService>();
   final pllsRepo = locator<PollsRepository>();
+  final services = locator<Services>();
   String? selectedTimeShift;
   String? selectedDate;
   final TextEditingController alternativeName = TextEditingController();
@@ -18,7 +21,13 @@ class ShiftCancleViewModel extends BaseViewModel {
   Future<String?> sendRequest(
       String fullName, String selectedTimeShift, String selectedDate) async {
     try {
-      int? rId = await pllsRepo.getResId(selectedDate, selectedTimeShift);
+      int? rId;
+
+      for (var x in services.idList!) {
+        if (x.date == selectedDate && x.shiftTime == selectedTimeShift) {
+          rId = (x.id!);
+        }
+      }
       Person user = sharedPreferencesRepository.getUserInfo();
       String pId = user.id.toString();
       print(pId);

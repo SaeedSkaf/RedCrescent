@@ -5,6 +5,7 @@ import '../../core/router.router.dart';
 
 class HomeViewModel extends BaseViewModel {
   final navigation = locator<NavigationService>();
+
   void navToPdf() {
     navigation.navigateTo(Routes.pdfView);
   }

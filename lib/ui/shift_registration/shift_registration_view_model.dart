@@ -5,7 +5,7 @@ import 'package:sarc/data/polls_repository.dart';
 import 'package:sarc/data/services.dart';
 import 'package:sarc/models/person_model.dart';
 import 'package:sarc/models/result_model.dart';
-import 'package:sarc/models/shift.dart';
+import 'package:sarc/models/shift_model.dart';
 import 'package:stacked/stacked.dart';
 import '../../core/locator.dart';
 import 'package:date_utils/date_utils.dart' as imp;
@@ -55,6 +55,7 @@ class ShiftRegistrationViewModel extends BaseViewModel {
   int currentMonth = DateTime.now().month;
   int? daysInMonth;
   int shiftId = 0;
+  int getLock = 0;
   String choice = "";
 
   int getDaysInMonth(int currentYear, int currentMonth) {
@@ -143,6 +144,12 @@ class ShiftRegistrationViewModel extends BaseViewModel {
     ]);
   }
 
+  void getId() async {
+    final pllsRepo = locator<PollsRepository>();
+    List<Shift>? idData = await pllsRepo.getResId();
+    services.getAllId(idData!);
+  }
+
   Future<List<String>?> loadTableShifts(
       String selectedWeek, String type) async {
     try {
@@ -164,11 +171,12 @@ class ShiftRegistrationViewModel extends BaseViewModel {
       String id = user.id.toString();
       List<int> rIdList = [];
       List<Result> resultList = [];
-
       for (var x in shifts) {
-        await pllsRepo
-            .getResId(x.date!, x.shiftTime!)
-            .then((value) => rIdList.add(value!));
+        for (var y in services.idList!) {
+          if (x.date == y.date && x.shiftTime == y.shiftTime) {
+            rIdList.add(y.id!);
+          }
+        }
       }
       print(id);
       print(rIdList);

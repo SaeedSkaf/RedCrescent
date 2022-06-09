@@ -3,9 +3,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:sarc/data/urls_constants.dart';
 import 'package:sarc/models/person_model.dart';
-import 'package:sarc/models/reservation_model.dart';
 import 'package:sarc/models/result_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:sarc/models/shift_model.dart';
 
 class PollsRepository {
   Future<Person?> getUser(String username, String password) async {
@@ -27,20 +27,18 @@ class PollsRepository {
     return null;
   }
 
-  Future<int?> getResId(String day, String shiftTime) async {
-    int? temp;
+  Future<List<Shift>?> getResId() async {
+    List<Shift> listResult = [];
     try {
       var url = Uri.parse(
           ConstantsService.baseUrl + ConstantsService.getResIdEndpoint);
       var response = await http.get(url);
       var responseBody = jsonDecode(response.body);
-      responseBody.forEach((dynamic x) {
-        Reservation res = Reservation.fromJson(x);
-        if (res.day == day && res.shiftTime == shiftTime) {
-          temp = res.id!;
-        }
-      });
-      return temp;
+      for (var x in responseBody) {
+        Shift temp = Shift.fromJson(x);
+        listResult.add(temp);
+      }
+      return listResult;
     } catch (e) {
       Fluttertoast.showToast(msg: e.toString(), gravity: ToastGravity.BOTTOM);
     }

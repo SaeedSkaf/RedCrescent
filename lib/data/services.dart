@@ -1,8 +1,9 @@
-import 'package:sarc/models/person_model.dart';
+import 'package:sarc/models/shift_model.dart';
 
 class Services {
-  Person? user;
-  void setPerson(Person pr) {
-    user = pr;
+  List<Shift>? idList;
+
+  void getAllId(List<Shift> list) {
+    idList = list;
   }
 }

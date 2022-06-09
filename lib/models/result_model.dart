@@ -12,7 +12,7 @@ class Result {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['day_in_month'] = dayInMonth;
     data['shift_time'] = shiftTime;
     data['message'] = message;

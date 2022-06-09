@@ -22,7 +22,7 @@ class Pdf1ViewState extends State<Pdf1View> {
           child: Scaffold(
             appBar: AppBar(
                 title: const Text(
-                  " الدليل المركزي لفرق الاسعاف الاولي ",
+                  "الهيكلية العامة لفرق الإسعاف",
                   style: TextStyle(fontSize: 18),
                 ),
                 backgroundColor: Colors.red[600],
